@@ -4,6 +4,7 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
+        contentStyle: { backgroundColor: "#000000" },
         headerStyle: {
           backgroundColor: "#f4511e",
         },
@@ -14,6 +15,7 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="index" options={{}} />
+      <Stack.Screen name="query" options={{}} />
     </Stack>
   );
 }
