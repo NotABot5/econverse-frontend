@@ -6,36 +6,75 @@ import { useNavigation } from "expo-router";
 export default function Home() {
   const navigation = useNavigation();
   const [companyName, setCompanyName] = useState("");
-  const [personName, setPersonName] = useState("");
+  const [hints, setHints] = useState("");
   const [offerContent, setOfferContent] = useState("");
+  const [response, setResponse] = useState("");
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
   return (
-    <View style={style.parent_view}>
-      <Text style={style.text_large}>Asystent</Text>
-      <Text style={style.text_label}>Nazwa firmy</Text>
-      <TextInput
-        style={style.input_field}
-        value={companyName}
-        onChangeText={setCompanyName}
-      />
-      <Text style={style.text_label}>Imię i nazwisko osoby (opcjonalnie)</Text>
-      <TextInput
-        style={style.input_field}
-        value={personName}
-        onChangeText={setPersonName}
-      />
-      <Text style={style.text_label}>Zawartość oferty</Text>
-      <TextInput
-        style={style.input_field}
-        value={offerContent}
-        onChangeText={setOfferContent}
-      />
-      <Text style={style.test_button}>Wyślij zapytanie</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      {response ? (
+        <View style={style.parent_view}>
+          <Text style={style.text_large}>Informacje o {companyName}:</Text>
+          <Text style={style.text_small}>{response}</Text>
+        </View>
+      ) : (
+        <View style={style.parent_view}>
+          <Text style={style.text_large}>Asystent</Text>
+          <Text style={style.text_label}>Nazwa firmy</Text>
+          <TextInput
+            style={style.input_field}
+            value={companyName}
+            onChangeText={setCompanyName}
+          />
+          <Text style={style.text_label}>
+            Dodaj podpowiedzi do wyszukiwania firmy (opcjonalnie)
+          </Text>
+          <TextInput
+            style={style.input_field}
+            value={hints}
+            onChangeText={setHints}
+          />
+          <Text style={style.text_label}>Co chcesz sprzedać?</Text>
+          <TextInput
+            style={style.input_field}
+            value={offerContent}
+            onChangeText={setOfferContent}
+          />
+          <Text
+            style={style.test_button}
+            onPress={async (e) => {
+              e.preventDefault();
+              const to_pass = JSON.stringify({
+                name: companyName,
+                info: hints,
+              });
+              console.log(to_pass);
+              const resp = await fetch(
+                "https://w74mw4w2a3eai42dj26lljs64u0xfzxu.lambda-url.us-east-1.on.aws/",
+                {
+                  method: "POST",
+                  statusCode: 201,
+                  isBase64Encoded: false,
+                  body: to_pass,
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                }
+              );
+              console.log(resp);
+              const data = await resp.json();
+              console.log(data);
+            }}
+          >
+            Wyślij zapytanie
+          </Text>
+          <StatusBar style="auto" />
+        </View>
+      )}
+    </>
   );
 }
 
@@ -46,6 +85,14 @@ const style = StyleSheet.create({
     textAlign: "center",
     color: "#FF7900",
     marginBottom: 30,
+  },
+  text_small: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#fff",
+    fontWeight: "bold",
+    marginTop: 15,
+    marginBottom: 15,
   },
   text_label: {
     fontSize: 10,
