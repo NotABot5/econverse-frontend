@@ -1,5 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Image,
+  ScrollView,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 
@@ -12,17 +19,37 @@ export default function Home() {
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
+  /*const parsed_response = response ? JSON.parse(response) : "";
+  const resiter = [];
 
+  for (const [key, value] of Object.entries(JSON.parse(parsed_response[0]))) {
+    resiter.push({ key, value });
+  }*/
   return (
     <>
       {response ? (
-        <View style={style.parent_view}>
-          <Text style={style.text_large}>Informacje o {companyName}:</Text>
+        <ScrollView style={{ padding: 52 }}>
+          {/*resiter.map((prev, index) => {
+          const key = prev.key;
+          const value = prev.value;
+          return (
+            //add aissistant logo
+            <View key={index}>
+              <Text style={style.text_large}>{key}</Text>
+              <Text style={style.text_small}>{value}</Text>
+            </View>
+          );
+        })*/}
+          <Text style={style.text_large}>Podpowiedzi dla sprzedawcy</Text>
           <Text style={style.text_small}>{response}</Text>
-        </View>
+        </ScrollView>
       ) : (
         <View style={style.parent_view}>
-          <Text style={style.text_large}>Asystent</Text>
+          <Image
+            resizeMethod={"resize"}
+            style={{ marginBottom: 40 }}
+            source={require("../assets/Logo.png")}
+          />
           <Text style={style.text_label}>Nazwa firmy</Text>
           <TextInput
             style={style.input_field}
@@ -50,30 +77,29 @@ export default function Home() {
               const to_pass = JSON.stringify({
                 name: companyName,
                 info: hints,
+                product: offerContent,
               });
               console.log(to_pass);
-              const resp = await fetch(
-                "https://w74mw4w2a3eai42dj26lljs64u0xfzxu.lambda-url.us-east-1.on.aws/",
-                {
-                  method: "POST",
-                  statusCode: 201,
-                  isBase64Encoded: false,
-                  body: to_pass,
-                  headers: {
-                    "content-type": "application/json",
-                  },
-                }
-              );
+              const resp = await fetch("", {
+                method: "POST",
+                statusCode: 201,
+                isBase64Encoded: false,
+                body: to_pass,
+                headers: {
+                  "content-type": "application/json",
+                },
+              });
               console.log(resp);
               const data = await resp.json();
-              console.log(data);
+              setResponse(data);
             }}
           >
             Wyślij zapytanie
           </Text>
-          <StatusBar style="auto" />
         </View>
       )}
+
+      <StatusBar style="auto" />
     </>
   );
 }
